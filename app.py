@@ -16,36 +16,42 @@ app = dash.Dash(__name__, server=server, external_stylesheets=[dbc.themes.BOOTST
 
 
 #membaca file
-air_masuk1 = "Chart Air Masuk "
+air_masuk1 = "Chart Inflow"
 
-air_keluar1 = "Chart Air Keluar "
+air_keluar1 = "Chart Outflow "
 
-url_masuk = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQVE6RWRi3EG9vL2iBq7Vw2RK3SW2-iIwAaFus3nU2HLbbzhZ3Jb3xVdv6Kd-nJ-hu4gu8ftRZ4mJvF/pub?output=csv&sheet={air_masuk1}"
-url_keluar = url="https://docs.google.com/spreadsheets/d/e/2PACX-1vQQVBtC-xGgAwkkTOMCEEJp78FbJTlBxWD39LXtRdRs9S5Pl4yjFjT7XZpGie1BgUpSrTVGgda74ste/pub?output=csv&sheet={air_keluar1}"
+url_inflow = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTZ8z6itG8nQZD67jMNQzHY_AGwZy4hchWg7gv1YWwrm1wDV-MC2actFWNc09khWq9t_2aTep77k7My/pub?output=csv&sheet={air_masuk1}"
+url_outflow = url="https://docs.google.com/spreadsheets/d/e/2PACX-1vQf-6x9UNzaLvMYnLobX3YxLvV8lhoWWzRDaO4I5ettKf3jZ_Z4a6rGYEL59CQ7GUmJGGs5hTeEPsD_/pub?output=csv&sheet={air_keluar1}"
 
 
-df_masuk = pd.read_csv(url_masuk)
-df_keluar = pd.read_csv(url_keluar)
+df_masuk = pd.read_csv(url_inflow)
+df_keluar = pd.read_csv(url_outflow)
 
 
 
 #membangun komponen
-header = html.Div([html.H1("Aplikasi Simulasi Kapasitas Embung E ITERA"), html.H3("Kelompok 7")])
+header = html.Div([html.H1("Aplikasi Simulasi Kapasitas Embung F ITERA"), html.H3("Kelompok ...")],style={
+    "textAlign" : "center",
+    "height": "4 rem",
+    "padding": "2rem 1rem",
+    "background-color": "#FF99CC"
+})
 
-subtitle = html.P("Kelompok...",style={})
 
+
+
+
+subtitle = html.P("Embung F merupakan...",style={"height": "4 rem",
+    "padding": "2rem 1rem","background-color": "#FFCCE5"})
 datamasuk_gam = go.FigureWidget()
-datamasuk_gam.add_bar(name="Chart Air Masuk Pertama", x=df_masuk['Bulan'], y=df_masuk['Data-masuk'])
-
-datamasuk_gam.layout.title = 'Chart Inflow Embung '
+datamasuk_gam.add_bar(name="Chart Inflow", x=df_masuk['Waktu'], y=df_masuk['Data'] )
+datamasuk_gam.layout.title = 'Chart Inflow Embung F'
 
 datakeluar_gam = go.FigureWidget()
-datakeluar_gam.add_scatter(name="Outflow Pertama" , x=df_keluar['Bulan'], y=df_keluar['Data-keluar'])
-
-datakeluar_gam.layout.title = 'Chart Outflow Embung'
+datakeluar_gam.add_scatter(name="Outflow " , x=df_keluar['Waktu'], y=df_keluar['Data'])
+datakeluar_gam.layout.title = 'Chart Outflow Embung F'
 
 simulation_fig = go.FigureWidget()
-# simulation_fig.add_scatter(name='Outflow', x=df_outflow['Bulan'], y=df_outflow['Data'])
 simulation_fig.layout.title = 'Simulation'
 
 
@@ -55,7 +61,7 @@ app.layout = html.Div(
         dbc.Row([header, subtitle])  ,
         dbc.Row(
             [
-                dbc.Col([dcc.Graph(figure=datamasuk_gam)]),
+                dbc.Col([dcc.Graph(figure=datamasuk_gam)] ),
                
             ]
             ),
@@ -70,7 +76,7 @@ app.layout = html.Div(
                 dbc.Button('Run', color="warning",id='run-button', n_clicks=0)
             ],style = {'textAlign': 'center'})
         , 
-        html.Div(id='output-container-button', children='Klik tombol "Run" untuk menjalankan .', style = {'textAlign': 'center'}),
+        html.Div(id='output-container-button', children='Klik Run untuk menjalankan simulasi.', style = {'textAlign': 'center'}),
         dbc.Row(
             [
                 dbc.Col([dcc.Graph(id='simulation-result', figure=simulation_fig)])
@@ -91,10 +97,10 @@ def graph_update(n_clicks):
     # filtering based on the slide and dropdown selection
     if n_clicks >=1:
         #program numerik ---start----
-        inout1 =  (df_masuk['jumlah'].values - df_keluar['jumlah'].values)
+        inout1 =  (df_masuk['Data'].values - df_keluar['Data'].values)
         N = len(inout1)
         u = np.zeros(N)
-        u0 = 196800
+        u0 = 19600
         u[0] = u0
         dt = 1
 
@@ -106,8 +112,8 @@ def graph_update(n_clicks):
 
         # the figure/plot created using the data filtered above 
         simulation_fig = go.FigureWidget()
-        simulation_fig.add_scatter(name='Simulation', x=df_keluar['Bulan'], y=u)
-        simulation_fig.layout.title = 'Hasil Simulasi'
+        simulation_fig.add_scatter(name='Simulation', x=df_keluar['Waktu'], y=u)
+        simulation_fig.layout.title = 'Simulation'
 
         return simulation_fig
     else:
@@ -116,11 +122,8 @@ def graph_update(n_clicks):
 
         return simulation_fig
 
-    
-
 
 #jalankan aplikasi
 if __name__=='__main__':
     app.run_server()
 
-#debug=True, port=1191
