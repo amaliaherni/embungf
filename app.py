@@ -30,7 +30,7 @@ df_keluar = pd.read_csv(url_outflow)
 
 
 #membangun komponen
-header = html.Div([html.H1("Aplikasi Simulasi Kapasitas Embung F ITERA"), html.H3("Kelompok ...")],style={
+header = html.Div([html.H1("Aplikasi Simulasi Kapasitas Embung F ITERA"), html.H3("Kelompok 4")],style={
     "textAlign" : "center",
     "height": "4 rem",
     "padding": "2rem 1rem",
@@ -41,7 +41,7 @@ header = html.Div([html.H1("Aplikasi Simulasi Kapasitas Embung F ITERA"), html.H
 
 
 
-subtitle = html.P("Embung F merupakan...",style={"height": "4 rem",
+subtitle = html.Div([html.P("Embung F merupakan salah satu embung ITERA yang berfungsi menyimpan air hujan pada suatu kolam dan dioperasikan pada musim kering untuk berbagai kebutuhan air."),html.P("Data Embung F"),html.P("Luas = 0,56 Ha"),html.P("Volume = 19.600 m^3"),html.P("Pemanfaatan air embung merupakan fungsi dari inflow, outflow dan tampungan embung. Inflow adalah aliran sungai yang masuk ke embung. Outflow terdiri dari lepasan embung untuk irigasi, air baku dan kebutuhan konservasi sungai."), html.P("Permodelan simulasi tampungan embungan merupakan selisih nilai inflow dan nilai outflow.")],style={"height": "4 rem",
     "padding": "2rem 1rem","background-color": "#FFCCE5"})
 datamasuk_gam = go.FigureWidget()
 datamasuk_gam.add_bar(name="Chart Inflow", x=df_masuk['Waktu'], y=df_masuk['Data'] )
@@ -125,5 +125,5 @@ def graph_update(n_clicks):
 
 #jalankan aplikasi
 if __name__=='__main__':
-    app.run_server()
+    app.run_server(debug=True, port=2022)
 
